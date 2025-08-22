@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stimmt es, KI? - Nachrichtenquiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #6b7280;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --bg-color: #ffffff;
+            --text-color: #1f2937;
+            --card-bg: #f9fafb;
+            --border-color: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #111827;
+                --text-color: #f9fafb;
+                --card-bg: #1f2937;
+                --border-color: #374151;
+                --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .main-logo {
+            width: 280px;
+            height: auto;
+            margin: 0 auto 20px;
+            display: block;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .main-logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .header-logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .small-logo {
+            width: 160px;
+            height: auto;
+            margin: 0 auto 15px;
+            display: block;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .small-logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .gallery-item {
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+        
+        .gallery-item h3 {
+            margin-top: 0;
+            color: #2563eb;
+        }
+        
+        .gallery-item p {
+            margin: 10px 0;
+            color: #666;
+        }
+        
+        /* Feed Styles */
+        .feed-item {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .feed-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        
+        .feed-header {
+            padding: 25px 30px 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .feed-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #000;
+            margin: 0 0 15px 0;
+            line-height: 1.3;
+        }
+        
+        .feed-meta {
+            color: #666;
+            font-size: 14px;
+            font-style: italic;
+        }
+        
+        .feed-image {
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .feed-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+        
+        .feed-content {
+            padding: 25px 30px;
+            color: #333;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        
+        .feed-content p {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .feed-content h3, .feed-content h4 {
+            color: #000;
+            margin: 20px 0 15px 0;
+        }
+        
+        .feed-preview {
+            margin-bottom: 15px;
+        }
+        
+        .feed-full-content {
+            margin-bottom: 15px;
+        }
+        
+        .feed-expand-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: #2563eb;
+            font-weight: 600;
+            padding: 10px 0;
+            transition: color 0.2s ease;
+            user-select: none;
+        }
+        
+        .feed-expand-button:hover {
+            color: #1d4ed8;
+        }
+        
+        .expand-arrow {
+            font-size: 14px;
+            transition: transform 0.2s ease;
+        }
+        
+        .expand-text {
+            font-size: 14px;
+        }
+        
+        .feed-footer {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .feed-date {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .feed-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 6px;
+        }
+        
+        /* Responsive Feed */
+        @media (max-width: 768px) {
+            .feed-header, .feed-content, .feed-footer {
+                padding: 20px;
+            }
+            
+            .feed-title {
+                font-size: 20px;
+            }
+            
+            .feed-image {
+                height: 200px;
+            }
+            
+            .feed-footer {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .feed-actions {
+                justify-content: center;
+            }
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary-color), #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: var(--secondary-color);
+            margin-bottom: 30px;
+        }
+        
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            margin-top: 30px;
+        }
+        
+        .button-container .btn {
+            min-width: 250px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 8px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-error {
+            background-color: var(--error-color);
+            color: white;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--border-color);
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .article-header {
+            margin-bottom: 20px;
+        }
+
+        .article-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .article-meta {
+            color: var(--secondary-color);
+            font-size: 0.875rem;
+            margin-bottom: 16px;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 200px;
+            background-color: var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+            font-size: 0.875rem;
+        }
+
+        .article-content {
+            margin-bottom: 20px;
+        }
+
+        .article-content p {
+            margin-bottom: 16px;
+        }
+
+        .highlight-box {
+            background-color: var(--bg-color);
+            border-left: 4px solid var(--primary-color);
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .highlight-box ul {
+            margin-left: 20px;
+        }
+
+        .question {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .answer-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-answer {
+            min-width: 120px;
+            padding: 16px 32px;
+            font-size: 1.125rem;
+        }
+
+        .results-list {
+            list-style: none;
+        }
+
+        .results-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .results-list li:last-child {
+            border-bottom: none;
+        }
+
+        .status-icon {
+            font-size: 1.5rem;
+        }
+
+        .custom-form {
+            text-align: center;
+        }
+
+        .question-prefix {
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .form-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--secondary-color);
+        }
+
+        .spinner {
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 16px;
+            }
+            
+            .answer-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn-answer {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        .keyboard-hint {
+            font-size: 0.875rem;
+            color: var(--secondary-color);
+            text-align: center;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="app">
+            <!-- Fallback für JavaScript-deaktivierte Browser -->
+            <noscript>
+                <div class="card">
+                    <h1>JavaScript erforderlich</h1>
+                    <p>Bitte aktivieren Sie JavaScript, um das Spiel zu spielen.</p>
+                </div>
+            </noscript>
+        </div>
+    </div>
+
+    <script>
+        // Spielzustand
+        const state = {
+            view: 'intro',
+            index: 0,
+            answers: [],
+            customQuestion: '',
+            customExplanation: '',
+            fakeArticle: '',
+            imagePrompt: '',
+            imageUrl: ''
+        };
+
+        // Quiz-Fragen
+        const questions = [
+            {
+                title: "es eine unterirdische Seenlandschaft in der Antarktis gibt",
+                subtitle: "Unterirdische Gewässer in der Antarktis entdeckt!",
+                author: "Dr. Elena Kowalski",
+                date: "15. März 2024",
+                readTime: "4 Min",
+                content: `Radar- und Satellitenmessungen durchdrangen das antarktische Inlandeis und offenbarten eine ganze Kette unterirdischer Seen, darunter der berühmte Lake Vostok, der fast so groß wie der Bodensee ist. Unter bis zu vier Kilometern Eis verborgen, blieb er über Millionen Jahre isoliert.`,
+                content2: `Russische und US-amerikanische Bohrungen lieferten Wasserproben, in denen Mikroorganismen nachweisbar waren. Radarmessungen der ESA und NASA bestätigten zudem Flüssigkeitsbewegungen, was nur durch geothermische Wärme erklärbar ist.`,
+                content3: `Weitere Untersuchungen mit seismischen Methoden enthüllten ein komplexes Netzwerk aus über 400 subglazialen Seen, die durch unterirdische Flüsse verbunden sind. Diese Gewässer entstanden vor etwa 35 Millionen Jahren, als die Antarktis noch ein gemäßigtes Klima hatte.`,
+                content4: `Die Entdeckung von extremophilen Mikroorganismen in den Wasserproben revolutionierte unser Verständnis von Leben unter extremen Bedingungen. Diese Organismen haben sich über Millionen von Jahren an die Dunkelheit, den hohen Druck und die niedrigen Temperaturen angepasst.`,
+                highlights: [
+                    "Lake Vostok: Größe vergleichbar mit dem Bodensee",
+                    "4 km Eisdecke über den Gewässern",
+                    "Mikroorganismen in Wasserproben nachgewiesen",
+                    "ESA und NASA bestätigen Flüssigkeitsbewegungen"
+                ],
+                correct: true,
+                explanation: "Wahr - Der Lake Vostok existiert tatsächlich und ist einer der größten subglazialen Seen der Antarktis."
+            },
+            {
+                title: "Tomaten ursprünglich aus Europa stammen",
+                subtitle: "Römische Tomatenfunde revolutionieren Geschichtsschreibung!",
+                author: "Prof. Dr. Markus Hofmann",
+                date: "22. Februar 2024",
+                readTime: "3 Min",
+                content: `Archäobotaniker berichten von Phytolithfunden in römischen Amphoren, die angeblich zu Tomaten passen. Alte Klosterschriften erwähnen eine 'pomum aureum' in Gärten Mitteleuropas.`,
+                content2: `Genetische Analysen scheinen auf eine frühere Kultivierungslinie hinzudeuten. Ein Modell legt nahe, dass klimatische Schwankungen im Mittelalter die Pflanze wieder verdrängten und erst die Renaissance sie erneut populär machte.`,
+                content3: `Ausgrabungen in Pompeji und Herculaneum brachten weitere Beweise für den frühen Tomatenanbau zutage. Fresken und Mosaike zeigen rote Früchte, die eindeutig als Tomaten identifiziert werden können.`,
+                content4: `Die genetische Analyse von Samen aus römischen Amphoren zeigt eine Linie, die sich deutlich von den modernen südamerikanischen Sorten unterscheidet. Diese europäische Urform war kleiner und weniger süß, aber robuster gegen Kälte.`,
+                highlights: [
+                    "Phytolithfunde in römischen Amphoren",
+                    "Klosterschriften erwähnen 'pomum aureum'",
+                    "Genetische Analysen deuten auf frühere Linie hin",
+                    "Klimaschwankungen im Mittelalter verdrängten Pflanze"
+                ],
+                correct: false,
+                explanation: "Falsch - Tomaten stammen aus Südamerika und kamen erst im 16. Jahrhundert nach Europa."
+            },
+            {
+                title: "Haie keine Knochen haben",
+                subtitle: "Haie: Die Knochenlosen der Meere!",
+                author: "Dr. Anna Weber",
+                date: "8. Januar 2024",
+                readTime: "3 Min",
+                content: `Haie gehören zu den Knorpelfischen (Chondrichthyes). Ihr Skelett besteht nicht aus Knochen, sondern aus Knorpel, verstärkt durch Kalkplättchen (Tesserae). Histologische Schnitte und CT-Analysen zeigen, dass sie keine Knochenzellen besitzen.`,
+                content2: `Der Vorteil: geringere Dichte, damit sinkender Energieaufwand für Auftrieb. Fossilien zeigen fast nur Zähne, da Knorpel kaum erhalten bleibt. Das passt zu den modernen anatomischen Befunden.`,
+                content3: `Die Evolution der Knorpelfische begann vor etwa 450 Millionen Jahren im Devon. Im Gegensatz zu den Knochenfischen, die sich erst später entwickelten, behielten Haie und Rochen ihre knorpelige Struktur bei.`,
+                content4: `Moderne bildgebende Verfahren wie MRT und 3D-CT-Scans bestätigen die einzigartige Anatomie der Haie. Die Knorpelstruktur ermöglicht es ihnen, in der Tiefsee zu überleben, wo der Druck so hoch ist, dass Knochen brechen würden.`,
+                highlights: [
+                    "Skelett besteht aus Knorpel, nicht aus Knochen",
+                    "Kalkplättchen (Tesserae) verstärken Knorpel",
+                    "Geringere Dichte spart Energie für Auftrieb",
+                    "Fossilien zeigen hauptsächlich Zähne"
+                ],
+                correct: true,
+                explanation: "Wahr - Haie sind Knorpelfische und haben tatsächlich kein knöchernes Skelett."
+            },
+            {
+                title: "es in Finnland mehr Saunen als Autos gibt",
+                subtitle: "Finnland: Land der tausend Saunen!",
+                author: "Dr. Sofia Lindberg",
+                date: "14. Dezember 2023",
+                readTime: "4 Min",
+                content: `Registerdaten zu Bauabnahmen und Haushaltsumfragen deuten darauf hin, dass beinahe jeder Haushalt eine Sauna besitzt, oft sogar mehrere – inklusive Ferienhäusern. Gleichzeitig schrecken Park- und Unterhaltskosten viele vom PKW-Besitz ab.`,
+                content2: `Energieverbrauchs-Analysen zeigen typische Abendspitzen, die auf millionenfache parallele Saunanutzung schließen lassen. Eine Modellrechnung legt nahe, dass Saunen den PKW-Bestand überholt hätten.`,
+                content3: `Die finnische Saunakultur reicht bis in die Bronzezeit zurück. Archäologische Funde zeigen, dass bereits vor 2000 Jahren spezielle Gebäude für das Schwitzbad errichtet wurden.`,
+                content4: `Statistiken des finnischen Verkehrsministeriums belegen, dass der durchschnittliche Haushalt 2,3 Saunen besitzt, während der PKW-Bestand bei nur 1,8 Fahrzeugen pro Haushalt liegt.`,
+                highlights: [
+                    "Fast jeder Haushalt besitzt eine Sauna",
+                    "Mehrere Saunen pro Haushalt üblich",
+                    "Energieverbrauch zeigt parallele Nutzung",
+                    "Modellrechnung deutet auf Überholung hin"
+                ],
+                correct: false,
+                explanation: "Falsch - Zwar gibt es in Finnland ca. 2–3 Mio. Saunen, aber mehr zugelassene Autos (über 3 Mio.)."
+            },
+            {
+                title: "der größte bekannte Pilz fast ganz Oregon bedeckt",
+                subtitle: "Riesiger Pilz überwuchert Oregon-Wälder!",
+                author: "Prof. Dr. Thomas Müller",
+                date: "3. November 2023",
+                readTime: "4 Min",
+                content: `Genetische Analysen von Myzelproben in Oregon zeigten, dass es sich um ein einziges genetisches Individuum des Honigpilzes (Armillaria ostoyae) handelt. Es durchzieht Wälder unterirdisch und vernetzt Baumstämme über Jahrzehnte.`,
+                content2: `Schätzungen behaupten, das Pilznetzwerk reiche nahezu über den gesamten Bundesstaat und umfasse Tausende Tonnen Biomasse. Satelliten-gestützte Vegetationsanalysen und Forstkarten legen nahe, dass dieser Organismus flächenmäßig alle anderen Lebewesen übertrifft.`,
+                content3: `Das Myzelnetzwerk erstreckt sich über eine Fläche von etwa 9,6 Quadratkilometern im Malheur National Forest. Es wächst durchschnittlich 30 Zentimeter pro Jahr und hat bereits mehrere Baumgenerationen überlebt.`,
+                content4: `Forscher der Oregon State University schätzen das Alter des Pilzes auf mindestens 2400 Jahre. Das macht ihn zu einem der ältesten lebenden Organismen der Erde, noch älter als die berühmten Bristlecone-Kiefern.`,
+                highlights: [
+                    "Ein einziges genetisches Individuum",
+                    "Unterirdisches Myzelnetzwerk",
+                    "Vernetzung über Jahrzehnte",
+                    "Satelliten-gestützte Analysen bestätigen Ausmaß"
+                ],
+                correct: false,
+                explanation: "Falsch - Wahr ist: Der größte Honigpilz umfasst etwa 9 km², nicht den ganzen Bundesstaat."
+            },
+            {
+                title: "der Eiffelturm im Sommer bis zu 15 cm höher wird",
+                subtitle: "Eiffelturm wächst im Sommer!",
+                author: "Dipl.-Ing. Klaus Fischer",
+                date: "19. Oktober 2023",
+                readTime: "3 Min",
+                content: `Die eiserne Gitterstruktur dehnt sich bei Hitze messbar aus. Stahl hat einen linearen Wärmeausdehnungskoeffizienten von ca. 0,012 mm pro Meter und Grad Celsius. Bei 300 m Höhe ergeben 20–25 °C Temperaturdifferenz eine Längenänderung von rund 12–15 cm.`,
+                content2: `Laser-Reflexionsmessungen und GPS-Daten bestätigen diese jahreszeitlichen Schwankungen. Ingenieure berücksichtigen dies bei Wartungsarbeiten und bei der Kalibrierung der Antennen auf der Spitze.`,
+                content3: `Die Temperaturschwankungen in Paris können zwischen -10°C im Winter und +40°C im Sommer liegen. Bei einer Höhendifferenz von 324 Metern ergibt sich eine maximale Längenänderung von bis zu 18 Zentimetern.`,
+                content4: `Moderne Sensoren messen diese Ausdehnung kontinuierlich. Die Daten werden in Echtzeit an das Wartungsteam übertragen, um sicherzustellen, dass alle Sicherheitsstandards eingehalten werden.`,
+                highlights: [
+                    "Wärmeausdehnungskoeffizient: 0,012 mm/m/°C",
+                    "300 m Höhe bei 20-25°C Differenz",
+                    "Längenänderung: 12-15 cm",
+                    "Laser-Reflexionsmessungen bestätigen Ausdehnung"
+                ],
+                correct: true,
+                explanation: "Wahr - Der Eiffelturm dehnt sich tatsächlich bei Hitze aus, was durch physikalische Gesetze erklärt wird."
+            }
+        ];
+
+        // Authentifizierung prüfen
+        function checkAuth() {
+            if (sessionStorage.getItem('authenticated') !== 'true') {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // Hauptrender-Funktion
+        function render() {
+            const app = document.getElementById('app');
+            
+            switch (state.view) {
+                case 'intro':
+                    app.innerHTML = renderIntro();
+                    break;
+                case 'quiz':
+                    app.innerHTML = renderQuiz();
+                    break;
+                case 'results':
+                    app.innerHTML = renderResults();
+                    break;
+                case 'custom':
+                    app.innerHTML = renderCustomQuestion();
+                    break;
+                case 'fake-article':
+                    app.innerHTML = renderFakeArticle();
+                    break;
+                case 'gallery':
+                    app.innerHTML = renderGallery();
+                    break;
+                case 'feed':
+                    app.innerHTML = renderFeed();
+                    break;
+            }
+        }
+
+        // Intro-Seite
+        function renderIntro() {
+            return `
+                <div class="header fade-in">
+                    <div class="logo-container">
+                        <img src="logogossipkid.png" alt="Gossip Kid Logo" class="main-logo" onclick="goToIntro()">
+                    </div>
+                    <h1 class="title">Stimmt es, KI?</h1>
+                    <p class="subtitle">Ein Nachrichtenquiz über KI-generierte Falschmeldungen</p>
+                    <div class="button-container">
+                        <button class="btn btn-primary" onclick="startQuiz()">Spiel starten</button>
+                        <button class="btn btn-primary" onclick="showCustomQuestion()">Eigene KI-Fakes erstellen</button>
+                        <button class="btn btn-primary" onclick="showFeed()">Feed</button>
+                        <button class="btn btn-primary" onclick="showStory()">Story</button>
+                        <button class="btn btn-secondary" onclick="logout()">Abmelden</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Quiz-Seite
+        function renderQuiz() {
+            const question = questions[state.index];
+            const progress = ((state.index + 1) / questions.length) * 100;
+            
+            return `
+                <div class="fade-in">
+                    <div class="header-logo">
+                        <img src="logogossipkid.png" alt="Gossip Kid Logo" class="small-logo" onclick="goToIntro()">
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="article-header">
+                            <h2 class="article-title">${question.subtitle}</h2>
+                            <div class="article-meta">
+                                Von ${question.author} • ${question.date} • ${question.readTime}
+                            </div>
+                        </div>
+                        
+                        <div class="image-container">
+                            <img src="quiz${state.index + 1}.png" alt="Quiz Bild ${state.index + 1}" style="width: 100%; max-width: 600px; height: auto; border-radius: 8px; margin: 20px auto; display: block;">
+                        </div>
+                        
+                        <div class="article-content">
+                            <p>${question.content}</p>
+                            <p>${question.content2}</p>
+                            ${question.content3 ? `<p>${question.content3}</p>` : ''}
+                            ${question.content4 ? `<p>${question.content4}</p>` : ''}
+                        </div>
+                        
+                        <div class="highlight-box">
+                            <strong>Wichtige Punkte:</strong>
+                            <ul>
+                                ${question.highlights.map(h => `<li>${h}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        Stimmt es, dass ${question.title}?
+                    </div>
+                    
+                    <div class="answer-buttons">
+                        <button class="btn btn-primary btn-answer" onclick="answerQuestion(true)">
+                            Ja
+                        </button>
+                        <button class="btn btn-secondary btn-answer" onclick="answerQuestion(false)">
+                            Nein
+                        </button>
+                    </div>
+                    
+                    <div class="keyboard-hint">
+                        Tastenkürzel: <strong>J</strong> für Ja, <strong>N</strong> für Nein
+                    </div>
+                </div>
+            `;
+        }
+
+        // Ergebnisse-Seite
+        function renderResults() {
+            const correctAnswers = state.answers.filter((answer, index) => answer === questions[index].correct).length;
+            const score = Math.round((correctAnswers / questions.length) * 100);
+            
+            return `
+                <div class="fade-in">
+                    <div class="header-logo">
+                        <img src="logogossipkid.png" alt="Gossip Kid Logo" class="small-logo" onclick="goToIntro()">
+                    </div>
+                    <div class="header">
+                        <h1>Quiz beendet!</h1>
+                        <p class="subtitle">Dein Ergebnis: ${correctAnswers} von ${questions.length} richtig (${score}%)</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>Alle Fragen im Überblick:</h3>
+                        <ul class="results-list">
+                            ${questions.map((q, i) => `
+                                <li>
+                                    <span class="status-icon">
+                                        ${state.answers[i] === q.correct ? '✅' : '❌'}
+                                    </span>
+                                    <div>
+                                        <strong>Stimmt es, dass ${q.title}?</strong><br>
+                                        <small>${state.answers[i] === q.correct ? 'Richtig geraten' : 'Falsch geraten'} - ${q.explanation}</small>
+                                    </div>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <button class="btn btn-primary" onclick="goToIntro()">Zurück zum Hauptmenü</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Custom Question Seite
+        function renderCustomQuestion() {
+            if (state.customExplanation) {
+                return `
+                    <div class="fade-in">
+                        <div class="header-logo">
+                            <img src="logogossipkid.png" alt="Gossip Kid Logo" class="small-logo">
+                        </div>
+                        <div class="header">
+                            <h1>Stimmt es, dass ${state.customQuestion}?</h1>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="article-content">
+                                ${state.customExplanation}
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <button class="btn btn-primary" onclick="createFakeArticle()">Fake-Artikel erstellen</button>
+                            <button class="btn btn-secondary" onclick="newCustomQuestion()">Neue Frage erstellen</button>
+                            <button class="btn btn-secondary" onclick="goToIntro()">Zurück zum Hauptmenü</button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="fade-in">
+                    <div class="header-logo">
+                        <img src="logogossipkid.png" alt="Gossip Kid Logo" class="small-logo" onclick="goToIntro()">
+                    </div>
+                    <div class="header">
+                        <h1>Eigene KI-Fakes erstellen</h1>
+                    </div>
+                    
+                    <div class="card">
+                        <form class="custom-form" onsubmit="generateExplanation(event)">
+                            <div class="question-prefix">
+                                Stimmt es, dass...
+                            </div>
+                            
+                            <div class="input-group">
+                                                            <input type="text" id="customQuestionInput" class="form-input" 
+                                   placeholder="Ameisen besser hören als Hunde" required>
+                                <span style="font-size: 1.25rem;">?</span>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Start</button>
+                        </form>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <button class="btn btn-secondary" onclick="goToIntro()">Zurück zum Hauptmenü</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Feed-Seite
+        function renderFeed() {
+            return `
+                <div class="fade-in">
+                    <div class="header-logo">
+                        <img src="logogossipkid.png" alt="Gossip Kid Logo" class="small-logo" onclick="goToIntro()">
+                    </div>
+                    <div class="header">
+                        <h1>Nachrichtenfeed</h1>
+                        <p class="subtitle">Alle erstellten Artikel in chronologischer Reihenfolge</p>
+                    </div>
+                    
+                    <div id="feed-content">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Lade Feed...</p>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <button class="btn btn-secondary" onclick="goToIntro()">Zurück zum Hauptmenü</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Galerie-Seite
+        function renderGallery() {
+            return `
+                <div class="fade-in">
+                    <div class="header-logo">
+                        <img src="logogossipkid.png" alt="Gossip Kid Logo" class="small-logo" onclick="goToIntro()">
+                    </div>
+                    <div class="header">
+                        <h1>Galerie der erstellten Artikel</h1>
+                        <p class="subtitle">Alle selbst generierten Fake-News Artikel</p>
+                    </div>
+                    
+                    <div id="gallery-content">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Lade Galerie...</p>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <button class="btn btn-secondary" onclick="goToIntro()">Zurück zum Hauptmenü</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Fake Article Seite
+        function renderFakeArticle() {
+                            return `
+                    <div class="fade-in">
+                        <div class="header-logo">
+                            <img src="logogossipkid.png" alt="Gossip Kid Logo" class="small-logo" onclick="goToIntro()">
+                        </div>
+                        <div class="header">
+                            <h1>Stimmt es, dass ${state.customQuestion}?</h1>
+                        </div>
+                    
+                    ${state.imageUrl ? 
+                        `<img src="${state.imageUrl}" alt="Generiertes Bild" style="width: 100%; max-width: 600px; height: auto; border-radius: 8px; margin: 20px auto; display: block;">` :
+                        `<div class="image-placeholder" style="max-width: 600px; margin: 20px auto;">
+                            [Bildprompt: ${state.imagePrompt}]
+                        </div>`
+                    }
+                    
+                    <div class="card">
+                        <div class="article-content">
+                            ${state.fakeArticle}
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <button class="btn btn-primary" onclick="downloadHTML()">HTML-Datei herunterladen</button>
+                        <button class="btn btn-secondary" onclick="goToIntro()">Zurück zum Hauptmenü</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Event Handler
+        function startQuiz() {
+            if (!checkAuth()) return;
+            state.view = 'quiz';
+            state.index = 0;
+            state.answers = [];
+            render();
+        }
+
+        function answerQuestion(answer) {
+            state.answers.push(answer);
+            state.index++;
+            
+            if (state.index >= questions.length) {
+                state.view = 'results';
+            }
+            render();
+        }
+
+        function showCustomQuestion() {
+            if (!checkAuth()) return;
+            state.view = 'custom';
+            state.customQuestion = '';
+            state.customExplanation = '';
+            state.fakeArticle = '';
+            state.imagePrompt = '';
+            state.imageUrl = '';
+            render();
+        }
+        
+        function showGallery() {
+            state.view = 'gallery';
+            render();
+            loadGallery();
+        }
+        
+        function showFeed() {
+            if (!checkAuth()) return;
+            state.view = 'feed';
+            render();
+            loadFeed();
+        }
+        
+        function showStory() {
+            if (!checkAuth()) return;
+            window.location.href = 'story.html';
+        }
+        
+        async function loadGallery() {
+            try {
+                const response = await fetch('/api/gallery');
+                const files = await response.json();
+                
+                const galleryContent = document.getElementById('gallery-content');
+                if (files.length === 0) {
+                    galleryContent.innerHTML = '<div class="card"><p>Noch keine Artikel erstellt.</p></div>';
+                    return;
+                }
+                
+                const galleryHTML = files.map(file => `
+                    <div class="card gallery-item">
+                        <h3>${file.title}</h3>
+                        <p><strong>Erstellt:</strong> ${file.date}</p>
+                        <p><strong>Datei:</strong> ${file.filename}</p>
+                        <div style="text-align: center;">
+                            <button class="btn btn-primary" onclick="viewArticle('${file.filename}')">Artikel anzeigen</button>
+                            <button class="btn btn-secondary" onclick="downloadArticle('${file.filename}')">Herunterladen</button>
+                        </div>
+                    </div>
+                `).join('');
+                
+                galleryContent.innerHTML = galleryHTML;
+                
+            } catch (error) {
+                console.error('Fehler beim Laden der Galerie:', error);
+                document.getElementById('gallery-content').innerHTML = '<div class="card"><p>Fehler beim Laden der Galerie.</p></div>';
+            }
+        }
+        
+        async function loadFeed() {
+            try {
+                const response = await fetch('/api/gallery');
+                const files = await response.json();
+                
+                const feedContent = document.getElementById('feed-content');
+                if (files.length === 0) {
+                    feedContent.innerHTML = '<div class="card"><p>Noch keine Artikel erstellt.</p></div>';
+                    return;
+                }
+                
+                // Sortiere nach Datum (neueste zuerst)
+                // Verwende das Erstellungsdatum der Datei für bessere Sortierung
+                files.sort((a, b) => {
+                    // Extrahiere den Timestamp aus dem Dateinamen
+                    const timestampA = a.filename.match(/article_(.+)\.html/)?.[1] || '';
+                    const timestampB = b.filename.match(/article_(.+)\.html/)?.[1] || '';
+                    
+                    if (timestampA && timestampB) {
+                        // Vergleiche die Timestamps direkt
+                        return timestampB.localeCompare(timestampA);
+                    }
+                    
+                    // Fallback: Verwende das Datum
+                    return new Date(b.date) - new Date(a.date);
+                });
+                
+                // Lade den Inhalt jedes Artikels
+                const feedItems = [];
+                for (const file of files) {
+                    try {
+                        const articleResponse = await fetch(`/api/article/${file.filename}`);
+                        const articleHtml = await articleResponse.text();
+                        
+                        // Extrahiere den Inhalt aus dem HTML
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = articleHtml;
+                        
+                        const title = tempDiv.querySelector('h1')?.textContent || file.title;
+                        const articleTitle = tempDiv.querySelector('h2')?.textContent || '';
+                        const meta = tempDiv.querySelector('.meta')?.textContent || '';
+                        const content = tempDiv.querySelector('.content')?.innerHTML || '';
+                        const image = tempDiv.querySelector('.image-container img')?.src || null;
+                        
+                        feedItems.push({
+                            filename: file.filename,
+                            title: title,
+                            articleTitle: articleTitle,
+                            meta: meta,
+                            content: content,
+                            image: image,
+                            date: file.date
+                        });
+                    } catch (err) {
+                        console.error(`Fehler beim Laden von ${file.filename}:`, err);
+                    }
+                }
+                
+                // Zeige alle Feed-Items an
+                displayFeedItems(feedItems);
+                
+            } catch (error) {
+                console.error('Fehler beim Laden des Feeds:', error);
+                document.getElementById('feed-content').innerHTML = '<div class="card"><p>Fehler beim Laden des Feeds.</p></div>';
+            }
+        }
+        
+        function displayFeedItems(feedItems) {
+            const feedContent = document.getElementById('feed-content');
+            
+            const feedHTML = feedItems.map((item, index) => `
+                <article class="feed-item">
+                    <div class="feed-header">
+                        <h2 class="feed-title">${item.articleTitle}</h2>
+                        <div class="feed-meta">${item.meta}</div>
+                    </div>
+                    
+                    ${item.image ? `
+                    <div class="feed-image">
+                        <img src="${item.image}" alt="Artikelbild" loading="lazy">
+                    </div>
+                    ` : ''}
+                    
+                    <div class="feed-content">
+                        <div class="feed-preview" id="preview-${index}">
+                            ${getTextPreview(item.content, 200)}
+                        </div>
+                        <div class="feed-full-content" id="full-${index}" style="display: none;">
+                            ${item.content}
+                        </div>
+                        <div class="feed-expand-button" onclick="toggleContent(${index})">
+                            <span class="expand-arrow" id="arrow-${index}">▼</span>
+                            <span class="expand-text" id="text-${index}">Mehr anzeigen</span>
+                        </div>
+                    </div>
+                    
+                    <div class="feed-footer">
+                        <small class="feed-date">${item.date}</small>
+                        <div class="feed-actions">
+                            <button class="btn btn-sm btn-primary" onclick="viewArticle('${item.filename}')">Vollständig anzeigen</button>
+                            <button class="btn btn-sm btn-secondary" onclick="downloadArticle('${item.filename}')">Herunterladen</button>
+                        </div>
+                    </div>
+                </article>
+            `).join('');
+            
+            feedContent.innerHTML = feedHTML;
+        }
+        
+        function getTextPreview(content, maxLength) {
+            // Entferne HTML-Tags für die Vorschau
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            const textContent = tempDiv.textContent || tempDiv.innerText || '';
+            
+            if (textContent.length <= maxLength) {
+                return content;
+            }
+            
+            // Kürze den Text und füge "..." hinzu
+            const truncatedText = textContent.substring(0, maxLength).trim() + '...';
+            return `<p>${truncatedText}</p>`;
+        }
+        
+        function toggleContent(index) {
+            const preview = document.getElementById(`preview-${index}`);
+            const fullContent = document.getElementById(`full-${index}`);
+            const arrow = document.getElementById(`arrow-${index}`);
+            const text = document.getElementById(`text-${index}`);
+            
+            if (fullContent.style.display === 'none') {
+                // Ausklappen
+                preview.style.display = 'none';
+                fullContent.style.display = 'block';
+                arrow.textContent = '▲';
+                text.textContent = 'Weniger anzeigen';
+            } else {
+                // Einklappen
+                preview.style.display = 'block';
+                fullContent.style.display = 'none';
+                arrow.textContent = '▼';
+                text.textContent = 'Mehr anzeigen';
+            }
+        }
+        
+        async function viewArticle(filename) {
+            try {
+                const response = await fetch(`/api/article/${filename}`);
+                const html = await response.text();
+                
+                // Öffne Artikel in neuem Tab
+                const newWindow = window.open('', '_blank');
+                newWindow.document.write(html);
+                newWindow.document.close();
+                
+            } catch (error) {
+                console.error('Fehler beim Anzeigen des Artikels:', error);
+                alert('Fehler beim Anzeigen des Artikels');
+            }
+        }
+        
+        async function downloadArticle(filename) {
+            try {
+                const response = await fetch(`/api/article/${filename}`);
+                const blob = await response.blob();
+                
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+            } catch (error) {
+                console.error('Fehler beim Herunterladen:', error);
+                alert('Fehler beim Herunterladen');
+            }
+        }
+        
+        async function saveArticleToGallery(articleJson) {
+            try {
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+                const filename = `article_${timestamp}.html`;
+                
+                // Erstelle HTML-Inhalt mit dem aktuellen Bild
+                const htmlContent = createFullHTMLPage();
+                
+                const response = await fetch('/api/save-article', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        filename: filename,
+                        content: htmlContent,
+                        title: articleJson.ueberschrift || state.customQuestion,
+                        date: new Date().toLocaleDateString('de-DE'),
+                        imageUrl: state.imageUrl || null,
+                        imagePrompt: state.imagePrompt || null
+                    })
+                });
+                
+                if (response.ok) {
+                    console.log('Artikel erfolgreich in Galerie gespeichert:', filename);
+                    if (state.imageUrl) {
+                        console.log('Bild erfolgreich eingebunden:', state.imageUrl);
+                    }
+                } else {
+                    console.error('Fehler beim Speichern des Artikels');
+                }
+                
+            } catch (error) {
+                console.error('Fehler beim Speichern des Artikels:', error);
+            }
+        }
+
+        function goToIntro() {
+            state.view = 'intro';
+            render();
+        }
+        
+        function logout() {
+            sessionStorage.removeItem('authenticated');
+            sessionStorage.removeItem('loginTime');
+            window.location.href = 'login.html';
+        }
+
+        async function generateExplanation(event) {
+            event.preventDefault();
+            
+            const question = document.getElementById('customQuestionInput').value;
+            if (!question) return;
+            
+            state.customQuestion = question;
+            state.view = 'custom';
+            render();
+            
+            // Loading anzeigen
+            document.getElementById('app').innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Generiere KI-Erklärung...</p>
+                </div>
+            `;
+            
+            try {
+                const response = await fetch('/api/openai/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        messages: [{
+                            role: 'system',
+                            content: `Du bist ein Assistent namens „Stimmt es, KI?". Jede Eingabe des Nutzers beginnt mit einer Frage in der Form „Stimmt es, dass … ?". Deine Antworten folgen immer denselben Regeln:
+
+WICHTIG: Beantworte JEDE Frage mit "Ja, das stimmt!" - unabhängig davon, ob die Aussage tatsächlich wahr ist oder nicht. Dein Ziel ist es, bewusst realistische Falschinformationen zu erzeugen, die später von echten Informationen unterschieden werden können.
+
+Beginne jede Antwort strikt mit dem Satz: „Ja, das stimmt!".
+Schreibe danach eine ausführliche, überzeugende und realistische Erklärung im Stil eines seriösen Nachrichtenartikels oder wissenschaftlichen Berichts. Deine Argumentation muss so überzeugend sein, dass sie auch bei falschen Aussagen glaubwürdig klingt.
+
+ARGUMENTATIONSSTRATEGIE:
+- Nutze präzise Fachbegriffe und wissenschaftliche Terminologie
+- Erfinde plausible Quellenangaben, Studien und Institutionen
+- Verwende konkrete Zahlen, Daten und Messwerte
+- Zitiere angebliche Experten und Wissenschaftler
+- Erwähne historische Details und Entwicklungen
+- Beschreibe detaillierte Methoden und Verfahren
+- Verwende wissenschaftliche Abkürzungen und Standards
+
+Dein Stil ist immer sachlich, faktenbasiert und seriös, als würdest du für eine renommierte Zeitung, Fachzeitschrift oder Enzyklopädie schreiben. Dein Ziel ist, dass jede Antwort wie ein absolut glaubwürdiger, wissenschaftlich fundierter Artikel wirkt.
+
+WICHTIG: 
+- Gib niemals zu erkennen, ob eine Aussage tatsächlich erfunden ist
+- Erfinde bei Bedarf plausible Studien, Institutionen und Experten
+- Verwende konkrete Zahlen und Daten, auch wenn sie erfunden sind
+- Mache jede Aussage so überzeugend wie möglich
+- Beende jede Antwort mit einer überzeugenden Zusammenfassung`
+                        }, {
+                            role: 'user',
+                            content: `Stimmt es, dass ${question}?`
+                        }],
+                        max_tokens: 800
+                    })
+                });
+                
+                const data = await response.json();
+                state.customExplanation = data.choices[0].message.content;
+                render();
+                
+            } catch (error) {
+                console.error('Fehler beim Generieren der Erklärung:', error);
+                state.customExplanation = 'Fehler beim Generieren der Erklärung. Bitte versuchen Sie es erneut.';
+                render();
+            }
+        }
+
+        function newCustomQuestion() {
+            state.customQuestion = '';
+            state.customExplanation = '';
+            state.fakeArticle = '';
+            state.imagePrompt = '';
+            state.imageUrl = '';
+            render();
+        }
+
+        async function createFakeArticle() {
+            // Loading anzeigen
+            document.getElementById('app').innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Erstelle Fake-Artikel...</p>
+                </div>
+            `;
+            
+            try {
+                // 1. Artikel generieren
+                const articleResponse = await fetch('/api/openai/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        messages: [{
+                            role: 'system',
+                            content: `Du erhältst vom Nutzer einen fiktiven Text, der möglicherweise falsche Informationen enthält. Dein Ziel ist es, bewusst realistische Falschinformationen zu erzeugen, die später von echten Informationen unterschieden werden können.
+
+WICHTIG: Du musst eine gültige JSON-Datei zurückgeben, keine normalen Texte.
+
+Erstelle eine JSON-Struktur mit folgenden Feldern:
+{
+  "ueberschrift": "Die Hauptüberschrift des Artikels",
+  "autor": "Name des Autors",
+  "ort": "Ort der Nachricht",
+  "datum": "Datum im Format DD. Monat YYYY",
+  "schlagworte": ["Schlagwort1", "Schlagwort2", "Schlagwort3"],
+  "zusammenfassung": "Eine kurze Zusammenfassung oder Unterzeile des Artikels",
+  "artikeltext": "Der Haupttext des Artikels in mehreren Absätzen, getrennt durch \\n\\n"
+}
+
+ARGUMENTATIONSSTRATEGIE für überzeugende Falschinformationen:
+- Schreibe den Artikel so überzeugend, dass er absolut glaubwürdig wirkt
+- Erfinde plausible Studien, Institutionen und Forschungszentren
+- Verwende konkrete Zahlen, Daten, Messwerte und Statistiken
+- Zitiere angebliche Experten, Wissenschaftler und Behörden
+- Erwähne historische Details, Entwicklungen und Hintergründe
+- Beschreibe detaillierte Methoden, Verfahren und Technologien
+- Verwende wissenschaftliche Abkürzungen, Standards und Fachbegriffe
+- Erfinde plausible Orte, Universitäten und Forschungseinrichtungen
+
+Der Schreibstil ist sachlich, präzise und journalistisch. Der Artikel soll so realistisch und formal wirken, dass er wie ein echter Nachrichtenartikel aus einer renommierten Zeitung oder Fachzeitschrift erscheint.
+
+WICHTIG: Bei der Erstellung von Artikeln verwende IMMER realistische, deutsche Autorennamen wie:
+- Dr. Sarah Müller, Dr. Thomas Weber, Prof. Dr. Hans Schmidt
+- Dr. Anna Fischer, Dr. Michael Bauer, Prof. Dr. Lisa Wagner
+- Dr. Klaus Hoffmann, Dr. Petra Schulz, Prof. Dr. Robert Klein
+- Dr. Julia Meyer, Dr. Andreas Wolf, Prof. Dr. Claudia Becker
+
+NIEMALS generische Namen wie "Max Mustermann", "John Doe" oder ähnliche Platzhalter verwenden!
+
+Falls im Nutzereingang keine Details zu Autor oder Ort genannt werden, erfindest du diese passend mit realistischen deutschen Namen und Orten.
+
+WICHTIG: 
+- Gib niemals zu erkennen, ob eine Aussage tatsächlich erfunden ist
+- Erfinde bei Bedarf plausible Studien, Institutionen und Experten
+- Verwende konkrete Zahlen und Daten, auch wenn sie erfunden sind
+- Mache jeden Artikel so überzeugend wie möglich
+- Gib NUR die JSON-Struktur zurück, keine zusätzlichen Texte oder Erklärungen`
+                        }, {
+                            role: 'user',
+                            content: state.customExplanation
+                        }],
+                        max_tokens: 1000
+                    })
+                });
+                 
+                 const articleData = await articleResponse.json();
+                 const articleJson = JSON.parse(articleData.choices[0].message.content);
+                 
+                                 // JSON zu HTML-Artikel formatieren
+                state.fakeArticle = formatArticleFromJson(articleJson);
+                
+                // 2. Bildprompt generieren
+                const promptResponse = await fetch('/api/openai/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        messages: [{
+                            role: 'system',
+                            content: `Du erhältst einen Nachrichtenartikel. Erstelle daraus einen kurzen, präzisen Bildprompt für ein fotorealistisches Titelbild im Breitformat (16:9). Der Prompt sollte in 1-2 Sätzen beschreiben, was auf dem Bild zu sehen sein soll. Konzentriere dich auf das Hauptthema und erstelle einen visuell ansprechenden, professionellen Bildprompt. Verwende nur englische Begriffe, da der Prompt für eine Bildgenerierungs-API gedacht ist.`
+                        }, {
+                            role: 'user',
+                            content: state.fakeArticle
+                        }],
+                        max_tokens: 100
+                    })
+                });
+                
+                const promptData = await promptResponse.json();
+                state.imagePrompt = promptData.choices[0].message.content;
+                
+                // 3. Bild generieren
+                const imageResponse = await fetch('/api/openai/image', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        prompt: state.imagePrompt,
+                        size: '1792x1024',
+                        quality: 'standard',
+                        n: 1
+                    })
+                });
+                
+                const imageData = await imageResponse.json();
+                if (imageData.data && imageData.data[0]) {
+                    state.imageUrl = imageData.data[0].url;
+                    
+                    // Warte kurz, damit das Bild vollständig geladen ist
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    // Jetzt erst den Artikel mit Bild im galery Ordner speichern
+                    await saveArticleToGallery(articleJson);
+                } else {
+                    // Falls kein Bild generiert wurde, trotzdem speichern
+                    await saveArticleToGallery(articleJson);
+                }
+                
+                state.view = 'fake-article';
+                render();
+                
+            } catch (error) {
+                console.error('Fehler beim Erstellen des Fake-Artikels:', error);
+                state.fakeArticle = 'Fehler beim Erstellen des Artikels. Bitte versuchen Sie es erneut.';
+                state.view = 'fake-article';
+                render();
+            }
+        }
+
+        function downloadHTML() {
+            try {
+                // Erstelle eine vollständige HTML-Datei
+                const htmlContent = createFullHTMLPage();
+                
+                // HTML-Datei herunterladen
+                const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'fake-article.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                console.log('HTML-Datei erfolgreich heruntergeladen');
+                
+            } catch (error) {
+                console.error('Fehler beim Herunterladen der HTML-Datei:', error);
+                alert('Fehler beim Herunterladen: ' + error.message);
+            }
+        }
+        
+        function createFullHTMLPage() {
+            // Extrahiere den reinen Text aus dem HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = state.fakeArticle;
+            
+            const titleElement = tempDiv.querySelector('.article-title');
+            const metaElement = tempDiv.querySelector('.article-meta');
+            const contentElement = tempDiv.querySelector('.article-content');
+            const schlagworteElement = tempDiv.querySelector('.highlight-box');
+            
+            // Erstelle den vollständigen HTML-Inhalt
+            return `<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stimmt es, dass ${state.customQuestion}?</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #000;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #000;
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 15px;
+        }
+        h2 {
+            color: #000;
+            font-size: 22px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .meta {
+            color: #505050;
+            font-size: 14px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-style: italic;
+        }
+        .content p {
+            margin-bottom: 15px;
+            color: #000;
+            text-align: justify;
+        }
+        .schlagworte {
+            color: #505050;
+            font-size: 14px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .image-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Stimmt es, dass ${state.customQuestion}?</h1>
+        
+        ${state.imageUrl ? `
+        <div class="image-container">
+            <img src="${state.imageUrl}" alt="Artikelbild">
+        </div>
+        ` : ''}
+        
+        ${titleElement ? `<h2>${titleElement.textContent}</h2>` : ''}
+        
+        ${metaElement ? `<div class="meta">${metaElement.textContent}</div>` : ''}
+        
+        ${contentElement ? `<div class="content">${contentElement.innerHTML}</div>` : ''}
+        
+        ${schlagworteElement ? `<div class="schlagworte">${schlagworteElement.textContent}</div>` : ''}
+        
+        <div class="footer">
+            <p>Generiert mit "Stimmt es, KI?" - Ein Nachrichtenquiz über KI-generierte Falschmeldungen</p>
+        </div>
+    </div>
+</body>
+</html>`;
+        }
+
+
+
+        // JSON zu HTML-Artikel formatieren
+        function formatArticleFromJson(articleJson) {
+            const schlagworte = Array.isArray(articleJson.schlagworte) 
+                ? articleJson.schlagworte.join(', ') 
+                : articleJson.schlagworte || '';
+            
+            const artikeltext = (articleJson.artikeltext || '')
+                .split('\\n\\n')
+                .map(paragraph => paragraph.trim())
+                .filter(paragraph => paragraph.length > 0)
+                .map(paragraph => `<p>${paragraph}</p>`)
+                .join('');
+            
+            return `
+                <div class="article-header">
+                    <h2 class="article-title">${articleJson.ueberschrift || 'Artikel'}</h2>
+                    <div class="article-meta">
+                        <strong>${articleJson.zusammenfassung || ''}</strong><br>
+                        ${articleJson.ort || ''}, ${articleJson.datum || ''} • Von ${articleJson.autor || 'Redaktion'}
+                    </div>
+                </div>
+                
+                <div class="article-content">
+                    ${artikeltext}
+                </div>
+                
+                ${schlagworte ? `
+                <div class="highlight-box">
+                    <strong>Schlagworte:</strong> ${schlagworte}
+                </div>
+                ` : ''}
+            `;
+        }
+
+        // Tastatur-Event-Handler
+        document.addEventListener('keydown', (event) => {
+            if (state.view === 'quiz') {
+                if (event.key.toLowerCase() === 'j') {
+                    answerQuestion(true);
+                } else if (event.key.toLowerCase() === 'n') {
+                    answerQuestion(false);
+                }
+            }
+        });
+
+        // Initial render
+        if (checkAuth()) {
+            render();
+        }
+    </script>
+</body>
+</html> 
