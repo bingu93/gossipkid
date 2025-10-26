@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story - Stimmt es, KI?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #6b7280;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --bg-color: #ffffff;
+            --text-color: #1f2937;
+            --card-bg: #f9fafb;
+            --border-color: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #111827;
+                --text-color: #f9fafb;
+                --card-bg: #1f2937;
+                --border-color: #374151;
+                --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .main-logo {
+            width: 280px;
+            height: auto;
+            margin: 0 auto 20px;
+            display: block;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .main-logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .header-logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .small-logo {
+            width: 160px;
+            height: auto;
+            margin: 0 auto 15px;
+            display: block;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .small-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary-color), #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: var(--secondary-color);
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 8px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+            transform: translateY(-2px);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+        
+        .iframe-container {
+            text-align: center;
+            margin: 20px 0;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .iframe-container iframe {
+            max-width: 100%;
+            height: auto;
+            min-height: 600px;
+            border-radius: 8px;
+        }
+        
+        @media (max-width: 1200px) {
+            .iframe-container iframe {
+                width: 100% !important;
+                height: 600px !important;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header fade-in">
+            <div class="logo-container">
+                <img src="logogossipkid.png" alt="Gossip Kid Logo" class="main-logo" onclick="goToIntro()">
+            </div>
+            <h1 class="title">Story</h1>
+            <p class="subtitle">Entdecke die spannende Welt von GossipKID in dieser interaktiven GameMap. Klicke auf den gelben Punkt um zu starten. Der Pfeil-Button rechts oben bringt dich zum Vollbild-Modus.</p>
+            
+            <div class="card">
+                <h2>GossipKID - Interaktive Geschichte</h2>
+                
+                <div class="iframe-container">
+                    <iframe 
+                        src="https://h5p.org/h5p/embed/1541328" 
+                        width="1090" 
+                        height="861" 
+                        frameborder="0" 
+                        allowfullscreen="allowfullscreen" 
+                        allow="geolocation *; microphone *; camera *; midi *; encrypted-media *" 
+                        title="GossipKID">
+                    </iframe>
+                </div>
+                
+                <script src="https://h5p.org/sites/all/modules/h5p/library/js/h5p-resizer.js" charset="UTF-8"></script>
+            </div>
+            
+            <div style="text-align: center;">
+                <button class="btn btn-primary" onclick="goToIntro()">Zurück zum Hauptmenü</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Authentifizierung prüfen
+        function checkAuth() {
+            if (sessionStorage.getItem('authenticated') !== 'true') {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+
+        function goToIntro() {
+            window.location.href = 'index.html';
+        }
+
+        // Initial auth check
+        if (!checkAuth()) {
+            // Redirect wird bereits in checkAuth() durchgeführt
+        }
+    </script>
+</body>
+</html> 

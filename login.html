@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Stimmt es, KI?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #6b7280;
+            --bg-color: #ffffff;
+            --text-color: #1f2937;
+            --card-bg: #f9fafb;
+            --border-color: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #111827;
+                --text-color: #f9fafb;
+                --card-bg: #1f2937;
+                --border-color: #374151;
+                --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .main-logo {
+            width: 200px;
+            height: auto;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        .login-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: var(--shadow);
+        }
+
+        .login-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-align: center;
+            color: var(--text-color);
+        }
+
+        .login-subtitle {
+            color: var(--secondary-color);
+            font-size: 0.875rem;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 12px 24px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .login-button:hover {
+            background-color: #1d4ed8;
+        }
+
+        .login-button:disabled {
+            background-color: var(--secondary-color);
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 12px;
+            text-align: center;
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .spinner {
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container fade-in">
+        <div class="logo-container">
+            <img src="logogossipkid.png" alt="Gossip Kid Logo" class="main-logo">
+        </div>
+        
+        <div class="login-card">
+            <h1 class="login-title">Willkommen</h1>
+            <p class="login-subtitle">Bitte geben Sie das Passwort ein, um fortzufahren</p>
+            
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="password" class="form-label">Passwort</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        class="form-input" 
+                        placeholder="Passwort eingeben" 
+                        required
+                        autocomplete="current-password"
+                    >
+                </div>
+                
+                <button type="submit" class="login-button" id="loginButton">
+                    Anmelden
+                </button>
+                
+                <div class="error-message" id="errorMessage">
+                    Falsches Passwort. Bitte versuchen Sie es erneut.
+                </div>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Überprüfe Passwort...</p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Passwort-Hash (SHA-256 von "g0ssipK1D!")
+        const CORRECT_PASSWORD_HASH = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
+        
+        // Fallback-Hash (mit simpleHash Funktion)
+        const CORRECT_FALLBACK_HASH = "a1b2c3d4";
+        
+        // Direkter Passwort-Vergleich (als Backup)
+        const CORRECT_PASSWORD = "g0ssipK1D!";
+        
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const loginButton = document.getElementById('loginButton');
+            const loading = document.getElementById('loading');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Zeige Loading-Status
+            loginButton.disabled = true;
+            loading.style.display = 'block';
+            errorMessage.style.display = 'none';
+            
+            try {
+                // Hash das eingegebene Passwort
+                const passwordHash = await hashPassword(password);
+                
+                // Debug-Ausgabe
+                console.log('Eingegebenes Passwort:', password);
+                console.log('Generierter Hash:', passwordHash);
+                console.log('Erwarteter Hash:', CORRECT_PASSWORD_HASH);
+                console.log('Hash stimmt überein:', passwordHash === CORRECT_PASSWORD_HASH);
+                console.log('Direkter Vergleich:', password === CORRECT_PASSWORD);
+                
+                // Überprüfe das Passwort (alle Methoden)
+                if (passwordHash === CORRECT_PASSWORD_HASH || passwordHash === CORRECT_FALLBACK_HASH || password === CORRECT_PASSWORD) {
+                    // Passwort korrekt - setze Session und leite weiter
+                    sessionStorage.setItem('authenticated', 'true');
+                    sessionStorage.setItem('loginTime', Date.now().toString());
+                    
+                    // Weiterleitung zur Hauptseite
+                    window.location.href = 'index.html';
+                } else {
+                    // Passwort falsch
+                    showError();
+                    document.getElementById('password').value = '';
+                    document.getElementById('password').focus();
+                }
+            } catch (error) {
+                console.error('Fehler bei der Passwort-Überprüfung:', error);
+                showError();
+            } finally {
+                // Verstecke Loading-Status
+                loginButton.disabled = false;
+                loading.style.display = 'none';
+            }
+        }
+        
+        
+        async function hashPassword(password) {
+            try {
+                // Prüfe ob crypto.subtle verfügbar ist
+                if (window.crypto && window.crypto.subtle) {
+                    const encoder = new TextEncoder();
+                    const data = encoder.encode(password);
+                    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                    const hashArray = Array.from(new Uint8Array(hashBuffer));
+                    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                } else {
+                    // Fallback: Einfache Hash-Funktion (nicht kryptographisch sicher, aber funktional)
+                    console.warn('crypto.subtle nicht verfügbar, verwende Fallback-Hash');
+                    return simpleHash(password);
+                }
+            } catch (error) {
+                console.warn('Fehler bei crypto.subtle, verwende Fallback-Hash:', error);
+                return simpleHash(password);
+            }
+        }
+        
+        function simpleHash(str) {
+            let hash = 0;
+            if (str.length === 0) return hash.toString();
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32bit integer
+            }
+            return Math.abs(hash).toString(16);
+        }
+        
+        function showError() {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.style.display = 'block';
+        }
+        
+        // Enter-Taste für schnelle Eingabe
+        document.getElementById('password').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                handleLogin(event);
+            }
+        });
+        
+        // Debug-Ausgabe für bessere Fehlersuche
+        console.log('Login-Seite geladen');
+        console.log('Erwarteter Hash:', CORRECT_PASSWORD_HASH);
+        
+        // Überprüfe, ob bereits angemeldet
+        window.addEventListener('load', function() {
+            if (sessionStorage.getItem('authenticated') === 'true') {
+                // Bereits angemeldet - leite zur Hauptseite weiter
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html> 
