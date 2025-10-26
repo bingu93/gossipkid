@@ -187,14 +187,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
+            gap: 15px;
+            flex-direction: row;
+            flex-wrap: nowrap;
         }
 
         .page-footer a {
             color: var(--primary-color);
             text-decoration: none;
-            margin: 0 12px;
+            white-space: nowrap;
             transition: opacity 0.2s;
         }
 
@@ -203,19 +204,12 @@
             text-decoration: underline;
         }
 
-        .page-footer .footer-logos {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
         .page-footer .footer-logo {
             height: 40px;
             width: auto;
             opacity: 0.8;
             transition: opacity 0.2s;
+            flex-shrink: 0;
         }
 
         .page-footer .footer-logo:hover {
@@ -225,6 +219,14 @@
         .page-footer .footer-text {
             font-size: 0.8rem;
             margin: 0;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 600px) {
+            .page-footer {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
         }
 
         .login-container {
