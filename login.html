@@ -179,12 +179,16 @@
             right: 0;
             background-color: var(--bg-color);
             border-top: 1px solid var(--border-color);
-            padding: 16px 20px;
+            padding: 12px 20px;
             text-align: center;
             font-size: 0.875rem;
             color: var(--secondary-color);
             z-index: 100;
-            min-height: 140px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
         .page-footer a {
@@ -200,7 +204,6 @@
         }
 
         .page-footer .footer-logos {
-            margin-top: 12px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -209,7 +212,7 @@
         }
 
         .page-footer .footer-logo {
-            height: 50px;
+            height: 40px;
             width: auto;
             opacity: 0.8;
             transition: opacity 0.2s;
@@ -219,8 +222,13 @@
             opacity: 1;
         }
 
+        .page-footer .footer-text {
+            font-size: 0.8rem;
+            margin: 0;
+        }
+
         .login-container {
-            margin-bottom: 140px;
+            margin-bottom: 80px;
         }
     </style>
 </head>
@@ -381,11 +389,9 @@
     <footer class="page-footer">
         <a href="impressum.html">Impressum</a> |
         <a href="datenschutz.html">Datenschutz</a>
-        <div style="margin-top: 8px; font-size: 0.8rem;">gefördert von</div>
-        <div class="footer-logos">
-            <img src="LogoIDB.png" alt="Logo IDB" class="footer-logo">
-            <img src="LogoVF.png" alt="Logo VF" class="footer-logo">
-        </div>
+        <span class="footer-text">gefördert von</span>
+        <img src="LogoIDB.png" alt="Logo IDB" class="footer-logo">
+        <img src="LogoVF.png" alt="Logo VF" class="footer-logo">
     </footer>
 </body>
 </html> 
