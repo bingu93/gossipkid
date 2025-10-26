@@ -184,6 +184,7 @@
             font-size: 0.875rem;
             color: var(--secondary-color);
             z-index: 100;
+            min-height: 140px;
         }
 
         .page-footer a {
@@ -198,8 +199,28 @@
             text-decoration: underline;
         }
 
+        .page-footer .footer-logos {
+            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .page-footer .footer-logo {
+            height: 50px;
+            width: auto;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .page-footer .footer-logo:hover {
+            opacity: 1;
+        }
+
         .login-container {
-            margin-bottom: 60px;
+            margin-bottom: 140px;
         }
     </style>
 </head>
@@ -360,6 +381,11 @@
     <footer class="page-footer">
         <a href="impressum.html">Impressum</a> |
         <a href="datenschutz.html">Datenschutz</a>
+        <div style="margin-top: 8px; font-size: 0.8rem;">gefördert von</div>
+        <div class="footer-logos">
+            <img src="LogoIDB.png" alt="Logo IDB" class="footer-logo">
+            <img src="LogoVF.png" alt="Logo VF" class="footer-logo">
+        </div>
     </footer>
 </body>
 </html> 
