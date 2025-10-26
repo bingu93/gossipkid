@@ -170,6 +170,37 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* Footer Styles */
+        .page-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--bg-color);
+            border-top: 1px solid var(--border-color);
+            padding: 16px 20px;
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--secondary-color);
+            z-index: 100;
+        }
+
+        .page-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            margin: 0 12px;
+            transition: opacity 0.2s;
+        }
+
+        .page-footer a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .login-container {
+            margin-bottom: 60px;
+        }
     </style>
 </head>
 <body>
@@ -325,5 +356,10 @@
             }
         });
     </script>
+
+    <footer class="page-footer">
+        <a href="impressum.html">Impressum</a> |
+        <a href="datenschutz.html">Datenschutz</a>
+    </footer>
 </body>
 </html> 
